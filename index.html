@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ม้านั่งสำรอง — เรื่องราวลูกหนัง</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700;800&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pitch-dark:#0B2E23;
+    --paper:#F3EFE4;
+    --ink:#171A16;
+    --ink-dim:#5B5A50;
+    --amber:#C7791F;
+    --line:#DAD3C0;
+    --card-bg:#FFFDF7;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--paper);color:var(--ink);font-family:'Noto Sans Thai',sans-serif;-webkit-font-smoothing:antialiased;}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px 90px;}
+
+  /* Top masthead */
+  .masthead{
+    background:var(--pitch-dark);color:var(--paper);
+    padding:22px 24px;
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:44px;
+  }
+  .masthead-inner{max-width:1180px;margin:0 auto;width:100%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .brand{
+    font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;letter-spacing:0.02em;
+    display:flex;align-items:center;gap:10px;
+  }
+  .brand .badge{
+    width:30px;height:30px;border-radius:50%;background:var(--amber);
+    display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#1a1a1a;
+  }
+  .masthead-tag{font-size:12.5px;color:#C9C2AE;font-family:'Oswald',sans-serif;letter-spacing:0.06em;}
+
+  .homehead{margin-bottom:36px;}
+  .homehead .eyebrow{
+    font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;
+    font-size:12px;color:var(--amber);margin-bottom:8px;
+  }
+  .homehead h1{
+    font-family:'Noto Serif Thai',serif;font-weight:700;font-size:clamp(28px,4.6vw,44px);
+    line-height:1.2;margin:0 0 10px;
+  }
+  .homehead p{color:var(--ink-dim);font-size:15px;max-width:600px;line-height:1.7;margin:0;}
+
+  /* Feed grid */
+  .feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:26px;}
+
+  .story{
+    background:var(--card-bg);border:1px solid var(--line);border-radius:4px;overflow:hidden;
+    cursor:pointer;transition:box-shadow 0.18s ease, transform 0.18s ease;
+    display:flex;flex-direction:column;
+  }
+  .story:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(20,20,10,0.1);}
+  .story:focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+
+  .story-hero{
+    aspect-ratio:16/10;position:relative;overflow:hidden;
+    display:flex;align-items:flex-end;
+    background:var(--pitch-dark);
+  }
+  .story-hero img{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;transition:transform 0.3s ease;
+  }
+  .story:hover .story-hero img{
+    transform:scale(1.04);
+  }
+  .story-hero::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(0,0,0,0) 30%,rgba(0,0,0,0.7) 100%);
+  }
+  .hero-mono{
+    position:relative;z-index:1;color:rgba(255,255,255,0.92);
+    font-family:'Oswald',sans-serif;font-weight:700;
+    padding:16px 18px;font-size:13px;letter-spacing:0.05em;text-transform:uppercase;
+  }
+  .hero-num{
+    position:absolute;top:14px;right:16px;z-index:1;
+    font-family:'Oswald',sans-serif;font-weight:700;font-size:44px;color:rgba(255,255,255,0.3);
+  }
+
+  .story-body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:8px;flex:1;}
+  .story-cat{
+    font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;
+    text-transform:uppercase;color:var(--amber);
+  }
+  .story h2{
+    font-family:'Noto Sans Thai',sans-serif;font-weight:700;font-size:17.5px;line-height:1.4;margin:0;
+  }
+  .story .dek{font-size:13px;color:var(--ink-dim);line-height:1.65;margin:0;}
+  .story-meta{
+    margin-top:auto;padding-top:12px;border-top:1px solid var(--line);
+    font-size:11.5px;color:var(--ink-dim);font-family:'Oswald',sans-serif;letter-spacing:0.03em;
+    display:flex;justify-content:space-between;
+  }
+
+  /* Reader overlay */
+  .reader{
+    position:fixed;inset:0;background:var(--paper);
+    transform:translateY(100%);transition:transform 0.34s cubic-bezier(.2,.8,.2,1);
+    z-index:50;overflow-y:auto;
+  }
+  .reader.open{transform:translateY(0);}
+
+  .reader-top{
+    position:sticky;top:0;background:var(--pitch-dark);color:var(--paper);z-index:5;
+    padding:16px 24px;display:flex;align-items:center;justify-content:space-between;
+  }
+  .reader-back{
+    background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--paper);
+    padding:8px 16px;border-radius:999px;font-family:'Oswald',sans-serif;font-size:12.5px;
+    letter-spacing:0.04em;cursor:pointer;display:flex;align-items:center;gap:6px;
+  }
+  .reader-back:hover{background:rgba(255,255,255,0.14);}
+
+  .reader-content{max-width:760px;margin:0 auto;padding:36px 24px 90px;}
+  .reader-cat{font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:12px;}
+  .reader h1{font-family:'Noto Serif Thai',serif;font-weight:700;font-size:clamp(26px,4vw,38px);line-height:1.28;margin:0 0 14px;}
+  .reader-byline{font-family:'Oswald',sans-serif;font-size:12.5px;color:var(--ink-dim);border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:24px;display:flex;gap:14px;flex-wrap:wrap;}
+
+  .reader-hero{
+    aspect-ratio:16/9;border-radius:4px;margin-bottom:8px;position:relative;overflow:hidden;
+    background:var(--pitch-dark);
+    display:flex;align-items:flex-end;
+  }
+  .reader-hero img{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  }
+  .reader-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,0.6) 100%);}
+  .reader-hero .cap{position:relative;z-index:1;color:rgba(255,255,255,0.9);font-family:'Oswald',sans-serif;font-size:13px;padding:14px 18px;letter-spacing:0.03em;}
+  .img-credit{font-size:11.5px;color:var(--ink-dim);margin:6px 0 26px;font-style:italic;}
+
+  .reader-content p{font-size:16px;line-height:1.9;margin:0 0 18px;color:#242019;}
+  .reader-content .lede{font-size:18px;font-weight:600;color:var(--ink);}
+  .pull{
+    font-family:'Noto Serif Thai',serif;font-style:italic;font-size:19px;line-height:1.7;
+    border-left:3px solid var(--amber);padding:4px 20px;margin:28px 0;color:#332B1E;
+  }
+  .section-tag{
+    display:inline-block;font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;
+    letter-spacing:0.1em;text-transform:uppercase;color:var(--amber);
+    border-bottom:2px solid var(--amber);padding-bottom:3px;margin:32px 0 14px;
+  }
+  .src-line{font-size:12.5px;color:var(--ink-dim);margin-top:36px;padding-top:16px;border-top:1px solid var(--line);}
+
+  @media (max-width:520px){
+    .wrap{padding:0 16px 60px;}
+    .reader-content{padding:28px 18px 70px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="brand"><span class="badge">ม</span> ม้านั่งสำรอง</div>
+    <div class="masthead-tag">เรื่องเล่าลูกหนัง จากคนที่ดูจนจบทุกนัด</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="homehead">
+    <div class="eyebrow">FEATURED STORY</div>
+    <h1>เรื่องราวเบื้องหลังสนามหญ้า</h1>
+    <p>เรื่องดราม่า การเปลี่ยนแปลง และเส้นทางก้าวผ่านมรสุมชีวิต — คลิกอ่านเรื่องเต็มได้เลย</p>
+  </div>
+
+  <div class="feed" id="feed"></div>
+</div>
+
+<div class="reader" id="reader">
+  <div class="reader-top">
+    <button class="reader-back" id="backBtn">← กลับหน้าแรก</button>
+    <div class="brand" style="font-size:16px;"><span class="badge" style="width:22px;height:22px;font-size:11px;">ม</span> ม้านั่งสำรอง</div>
+  </div>
+  <div class="reader-content" id="readerContent"></div>
+</div>
+
+<script>
+const stories = [
+{
+  id:'yamal-ego', 
+  cat:'การเปลี่ยนแปลง',
+  image:'yamal.jpg', // ดึงรูปภาพ yamal.jpg จากโฟลเดอร์เดียวกัน
+  title:'จากอีโก้ สู่ฮีโร่: หนึ่งปีที่เปลี่ยนลามีน ยามาล',
+  dek:'ดราม่าวันเกิด บาดเจ็บเรื้อรัง อกหัก แล้วกลับมาเป็นผู้เล่นยอดเยี่ยมแห่งปี และแชมป์โลก 2026',
+  heroCap:'บาร์เซโลนา / มาดริด · ก.ค. 2025 – ก.ค. 2026',
+  byline:['เรื่องพิเศษ','อ่าน 6 นาที'],
+  body:`
+    <p class="lede">กรกฎาคม 2025 ลามีน ยามาล เพิ่งอายุครบ 18 ปี และกำลังยืนอยู่บนจุดสูงสุดของอาชีพ เขาเซ็นสัญญาฉบับใหม่กับบาร์เซโลนายาวถึงปี 2031 พร้อมได้รับมอบเสื้อเบอร์ 10 อันเป็นตำนานที่เมสซี่เคยสวม — ควรเป็นข่าวดีที่สุดในชีวิต แต่สัปดาห์เดียวกันนั้นเอง งานวันเกิดของเขาที่เมือง Olivella กลับกลายเป็นข่าวฉาวระดับประเทศ เมื่อมีรายงานว่าเขาจ้างนักแสดงภาวะแคระมาสร้างความบันเทิงในงาน จนสมาคม ADEE ต้องยื่นเรื่องร้องเรียนต่อกระทรวงสิทธิสังคมสเปน ข่าวดีที่สุดในอาชีพถูกกลบมิดด้วยดราม่าตั้งแต่วันแรกที่สวมเสื้อเบอร์ 10</p>
+
+    <div class="section-tag">มรสุมที่ถาโถมเข้ามา</div>
+    <p>เดือนกันยายน ยามาลเริ่มมีอาการปวดกระดูกหัวหน่าวเรื้อรัง (pubalgia) จากการไปเล่นให้ทีมชาติสเปน ทำให้ลงเล่นให้บาร์เซโลนาน้อยลงอย่างเห็นได้ชัด ก่อนเกม El Clásico ปลายเดือนตุลาคม เขายังไปพูดยั่วเรอัลมาดริดว่า "ขโมยแล้วยังบ่น" แต่พอถึงวันแข่งจริง 26 ตุลาคม เขาฝืนลงเล่นทั้งที่ยังเจ็บ ฟอร์มเงียบกริบตลอดเกม บาร์เซโลนาแพ้ไป 1-2</p>
+    <div class="pull">"พวกเราเล่นกันบนสนาม และวันนี้พวกเราคือคนที่ชนะ" — Aurélien Tchouaméni สวนกลับหลังเกม</div>
+
+    <div class="section-tag">จุดเปลี่ยน</div>
+    <p>ประมาณวันที่ 1 พฤศจิกายน ยามาลประกาศเลิกรากับ Nicki Nicole แร็ปเปอร์สาวชาวอาร์เจนตินาที่คบกันมาไม่กี่เดือน แล้วเพียงวันถัดมา เขาก็ยิงประตูได้ในเกมกับ Elche — เป็นประตูแรกในลีกในรอบหลายเดือน สื่อกีฬาถึงกับพาดหัวเชื่อมสองเหตุการณ์นี้เข้าด้วยกันตรงๆ ว่านี่คือการก้าวผ่านความเจ็บปวดด้วยประตูสำคัญ ไม่กี่วันถัดมา วันที่ 10 พฤศจิกายน มีเรื่องแทรกคนละสายเข้ามาอีก เมื่อสโมสรต้องเร่งส่งแพทย์ผู้เชี่ยวชาญจากเบลเยียมมารักษาอาการบาดเจ็บแบบเร่งด่วน จนสมาคมฟุตบอลสเปนไม่พอใจที่ไม่ได้รับแจ้งล่วงหน้า ต้องถอนตัวจากทีมชาติกะทันหัน</p>
+
+    <div class="section-tag">ฟอร์มพีคที่ไม่มีใครหยุดได้</div>
+    <p>แต่นับจากนั้น ทุกอย่างก็ค่อยๆ ดีขึ้นเรื่อยๆ 11 มกราคม 2026 เขาช่วยทีมคว้าแชมป์ Supercopa เอาชนะเรอัลมาดริด 3-2 แล้ววันที่ 28 กุมภาพันธ์ เขาก็ทำสิ่งที่ไม่เคยทำมาก่อนในอาชีพ — แฮตทริกแรกใส่ Villarreal ชนะ 4-1 ในวัยเพียง 18 ปี 230 วัน กลายเป็นนักเตะอายุน้อยที่สุดในศตวรรษที่ 21 ที่ทำแฮตทริกในลาลีกาได้ จบซีซั่น 2025/26 ด้วยผลงาน 16 ประตู 11 แอสซิสต์ และคว้ารางวัล LaLiga Player of the Season ไปครอง</p>
+
+    <div class="section-tag">ฮีโร่ของบอลโลก</div>
+    <p>ที่บอลโลก 2026 ยามาลลงสนามพร้อมผ้าคาดผมสกรีนคำว่า "Ego Yamal" — เปลี่ยนคำด่าที่เคยตามหลอกหลอนให้กลายเป็นสัญลักษณ์ของความมั่นใจ ในรอบรองชนะเลิศกับฝรั่งเศส เขาโดน Lucas Digne ทำฟาวล์ในกรอบเขตโทษ แม้จะมีดราม่าเรื่องแฮนด์บอลที่ฝรั่งเศสประท้วง แต่ VAR ยืนยันจุดโทษ และสเปนก็เดินหน้าเข้าสู่นัดชิงจนคว้าแชมป์โลกได้สำเร็จในที่สุด</p>
+  `,
+  src:'อ้างอิง: รายงานสโมสรบาร์เซโลนาและ RFEF, บทสัมภาษณ์หลังเกม El Clásico และ Elche, สถิติทางการ LaLiga ฤดูกาล 2025/26, รายงานฟุตบอลโลก 2026'
+}
+];
+
+const feed = document.getElementById('feed');
+const reader = document.getElementById('reader');
+const readerContent = document.getElementById('readerContent');
+const backBtn = document.getElementById('backBtn');
+
+function render(){
+  feed.innerHTML = '';
+  stories.forEach((s,i)=>{
+    const card = document.createElement('div');
+    card.className='story';
+    card.tabIndex=0;
+    card.setAttribute('role','button');
+    card.setAttribute('aria-label','อ่าน: '+s.title);
+    card.innerHTML = `
+      <div class="story-hero">
+        <img src="${s.image}" alt="${s.title}">
+        <span class="hero-num">${String(i+1).padStart(2,'0')}</span>
+        <span class="hero-mono">${s.heroCap}</span>
+      </div>
+      <div class="story-body">
+        <span class="story-cat">${s.cat}</span>
+        <h2>${s.title}</h2>
+        <p class="dek">${s.dek}</p>
+        <div class="story-meta"><span>${s.byline[0]}</span><span>${s.byline[1]}</span></div>
+      </div>
+    `;
+    card.addEventListener('click', ()=>openStory(s));
+    card.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();openStory(s);} });
+    feed.appendChild(card);
+  });
+}
+
+function openStory(s){
+  readerContent.innerHTML = `
+    <div class="reader-cat">${s.cat}</div>
+    <h1>${s.title}</h1>
+    <div class="reader-byline"><span>ม้านั่งสำรอง</span><span>${s.byline[1]}</span></div>
+    <div class="reader-hero">
+      <img src="${s.image}" alt="${s.title}">
+      <span class="cap">${s.heroCap}</span>
+    </div>
+    <div class="img-credit">ภาพประกอบ: ${s.title}</div>
+    ${s.body}
+    <div class="src-line">${s.src}</div>
+  `;
+  reader.classList.add('open');
+  window.scrollTo(0,0);
+  reader.scrollTop = 0;
+}
+
+backBtn.addEventListener('click', ()=>{ reader.classList.remove('open'); });
+
+render();
+</script>
+</body>
+</html>
